@@ -1,831 +1,588 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>重庆国际文化交流小使者 - AI智能评估系统</title>
-    <style>
-        /* 保持原有活泼且专业的风格 */
-        * {
-            box-sizing: border-box;
-            font-family: 'Comic Sans MS', '幼圆', 'Arial Rounded MT Bold', sans-serif;
-        }
-        body {
-            background-color: #f0f9ff;
-            margin: 0;
-            padding: 20px;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><path d="M30,30 Q50,10 70,30 T110,30" fill="none" stroke="%2399d6ff" stroke-width="2" opacity="0.3"/><circle cx="40" cy="50" r="8" fill="%23ffb366" opacity="0.4"/><circle cx="80" cy="70" r="6" fill="%23ff9999" opacity="0.4"/><circle cx="60" cy="90" r="7" fill="%2399cc99" opacity="0.4"/></svg>');
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: white;
-            border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0, 100, 200, 0.1);
-            padding: 30px;
-            border: 10px solid #66ccff;
-            position: relative;
-            overflow: hidden;
-        }
-        .container:before {
-            content: "";
-            position: absolute;
-            top: -15px; left: -15px; right: -15px; bottom: -15px;
-            border: 8px dotted #99ddff;
-            border-radius: 35px;
-            pointer-events: none;
-        }
-        
-        h1 {
-            text-align: center;
-            color: #ff6666;
-            font-size: 42px;
-            margin-bottom: 5px;
-            text-shadow: 3px 3px 0 #ffcccc;
-            letter-spacing: 2px;
-        }
-        .subtitle {
-            text-align: center;
-            color: #3399cc;
-            font-size: 22px;
-            margin-bottom: 20px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        
-        /* 系统说明样式 */
-        .system-description {
-            background: linear-gradient(135deg, #f8fbff 0%, #ffffff 100%);
-            border: 2px dashed #99ddff;
-            border-radius: 15px;
-            padding: 15px 25px;
-            margin: 20px auto 25px;
-            max-width: 900px;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(0, 100, 200, 0.05);
-        }
-        .system-description h3 {
-            color: #3399cc;
-            margin: 0 0 10px 0;
-            font-size: 18px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .system-description p {
-            color: #666;
-            font-size: 15px;
-            line-height: 1.6;
-            margin: 0;
-            text-align: justify;
-            text-align-last: center;
-        }
-        
-        /* 状态栏 */
-        .status-bar {
-            background: linear-gradient(135deg, #e6f7ff 0%, #ffffff 100%);
-            border: 2px solid #99ddff;
-            border-radius: 15px;
-            padding: 15px 25px;
-            margin-bottom: 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-        .status-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            background-color: #ccc;
-            border-radius: 50%;
-            transition: all 0.3s;
-        }
-        .status-indicator.active {
-            background-color: #00cc66; 
-            box-shadow: 0 0 10px #00cc66;
-            animation: blink 1.5s infinite;
-        }
-        .status-indicator.recording {
-            background-color: #ff4444; 
-            box-shadow: 0 0 10px #ff4444;
-            animation: pulse 1s infinite;
-        }
-        .status-text {
-            color: #555;
-            font-weight: bold;
-            font-size: 16px;
-        }
-        
-        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🌈 SAFE + C Topics 🌈</title>
+  <style>
+    /* === 1. 基础设置 === */
+    body {
+      font-family: "Quicksand", "Comic Sans MS", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+      margin: 0;
+      padding: 10px; /* 减小边距适配手机 */
+      min-height: 100vh;
+      color: #444;
+      overflow-x: hidden;
+      -webkit-user-select: none;
+      user-select: none;
+      /* 解决iOS点击高亮 */
+      -webkit-tap-highlight-color: transparent;
+    }
 
-        /* 按钮样式 */
-        .main-btn {
-            background: linear-gradient(to bottom, #ff9966, #ff8040);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 50px;
-            font-size: 18px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 5px 15px rgba(255, 128, 64, 0.3);
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .main-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(255, 128, 64, 0.4);
-        }
-        .main-btn.stop {
-            background: linear-gradient(to bottom, #ff6666, #cc0000);
-        }
+    h1 { 
+      text-align: center; 
+      color: #5d5dff; 
+      text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
 
-        .evaluation-area {
-            display: flex;
-            gap: 25px;
-        }
-        .criteria-section {
-            flex: 3;
-            background-color: #ffffff;
-            border-radius: 20px;
-            padding: 20px;
-            border: 3px solid #cceeff;
-        }
-        .results-section {
-            flex: 2;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+    .container { 
+      max-width: 1100px; 
+      margin: auto; 
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px;
+      border-radius: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
 
-        /* 评分卡片 */
-        .criteria-card {
-            background-color: #fff;
-            border: 2px solid #eef6fa;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            transition: all 0.3s;
-            position: relative;
-        }
-        .criteria-card:hover {
-            border-color: #99ddff;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
-        }
-        .criteria-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .criteria-icon { font-size: 24px; }
-        .criteria-name { font-size: 20px; color: #3399cc; font-weight: bold; }
-        .criteria-desc { font-size: 14px; color: #888; margin-bottom: 10px; padding-left: 38px; }
-        
-        /* 交互式星星 */
-        .stars {
-            display: flex;
-            gap: 8px;
-            padding-left: 38px;
-            cursor: pointer; 
-        }
-        .star {
-            font-size: 32px;
-            color: #e0e0e0;
-            transition: all 0.2s;
-        }
-        .star:hover {
-            transform: scale(1.2);
-            color: #ffe066; 
-        }
-        .star.active {
-            color: #ffcc00;
-            text-shadow: 0 2px 5px rgba(255, 204, 0, 0.3);
-        }
+    /* 指示牌样式 */
+    .instructions {
+      background: #fff;
+      padding: 15px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      border: 3px solid #ffde59;
+      box-shadow: 4px 4px 0px #ffde59;
+    }
+    .instructions p { margin: 5px 0; font-size: 1rem; }
 
-        /* 仪表盘 */
-        .dashboard-card {
-            background-color: #ffffff;
-            border-radius: 20px;
-            border: 3px solid #ffcc66;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 10px 20px rgba(255, 204, 0, 0.1);
-        }
-        .group-label { font-size: 18px; color: #666; margin-bottom: 10px; }
-        .total-score-display {
-            font-size: 64px;
-            color: #ff6666;
-            font-weight: bold;
-            line-height: 1;
-            margin: 10px 0;
-            text-shadow: 2px 2px 0px #fff0f0;
-        }
-        .score-label { font-size: 14px; color: #ff9966; text-transform: uppercase; letter-spacing: 2px; }
+    /* 2. 话题卡片 */
+    .topics {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .topic {
+      background: #fff;
+      border-radius: 20px;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      transition: transform 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 130px;
+      border: 3px solid transparent;
+      position: relative;
+    }
 
-        /* 终端窗口 - 样式修正 */
-        .terminal-window {
-            background-color: #2b3e50;
-            border-radius: 12px;
-            padding: 15px;
-            height: 220px;
-            /* 修正：移除这里的 overflow-y，防止父容器滚动 */
-            overflow: hidden; 
-            border: 2px solid #4a6680;
-            font-family: 'Consolas', monospace;
-            display: flex;
-            flex-direction: column;
-        }
-        .terminal-header {
-            color: #8faec9;
-            font-size: 12px;
-            border-bottom: 1px solid #4a6680;
-            padding-bottom: 5px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            flex-shrink: 0; /* 防止头部被压缩 */
-        }
-        /* 修正：添加 overflow-y 到内容区域，实现自动滚动 */
-        .terminal-content { 
-            color: #aaddff; 
-            font-size: 14px; 
-            line-height: 1.5; 
-            flex-grow: 1; 
-            overflow-y: auto; 
-            scroll-behavior: smooth; /* 平滑滚动 */
-        }
-        /* 美化滚动条 */
-        .terminal-content::-webkit-scrollbar {
-            width: 8px;
-        }
-        .terminal-content::-webkit-scrollbar-track {
-            background: #2b3e50; 
-        }
-        .terminal-content::-webkit-scrollbar-thumb {
-            background: #4a6680; 
-            border-radius: 4px;
-        }
-        .keyword-highlight { color: #ffcc66; font-weight: bold; text-decoration: underline; }
+    .topic-emoji { font-size: 3rem; margin-bottom: 5px; line-height: 1; }
+    .topic div:last-child { font-weight: bold; font-size: 1rem; color: #555; }
 
-        /* 小组切换 */
-        .group-switcher { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-        .group-tab {
-            background-color: #eef6fa;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
-            color: #6699bb;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .group-tab.active { background-color: #3399cc; color: white; transform: scale(1.05); }
+    .topic.selected { 
+      border-color: #7ed957; 
+      background: #f0fff0;
+      transform: scale(1.02);
+    }
+    .topic.selected::before {
+      content: "⭐"; position: absolute; top: 5px; right: 5px; font-size: 1.2rem;
+    }
 
-        /* 排名区域 */
-        .ranking-section {
-            margin-top: 40px;
-            background-color: #fff;
-            border-radius: 20px;
-            padding: 30px;
-            border: 4px solid #e0f0ff;
-            display: none;
-            animation: slideDown 0.5s ease-out;
-        }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-        .ranking-title {
-            text-align: center; color: #3399cc; font-size: 28px; margin-bottom: 25px; position: relative;
-        }
-        .ranking-title:after {
-            content: ""; display: block; width: 60px; height: 4px; background-color: #ff9966; margin: 10px auto 0; border-radius: 2px;
-        }
-        .ranking-table { width: 100%; border-collapse: collapse; }
-        .ranking-table th { background-color: #f0f9ff; color: #666; padding: 15px; font-weight: bold; border-bottom: 2px solid #cceeff; }
-        .ranking-table td { padding: 15px; text-align: center; border-bottom: 1px solid #eee; color: #555; font-size: 18px; }
-        .ranking-table tr:hover { background-color: #fafdff; }
-        .medal { font-size: 24px; margin-right: 5px; }
-        .gold { color: #FFD700; } .silver { color: #C0C0C0; } .bronze { color: #CD7F32; }
+    /* 3. 按钮美化 */
+    .buttons { display: flex; justify-content: center; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+    button {
+      padding: 12px 25px;
+      font-size: 1rem;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      background: #5d5dff;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 4px 0px #3f3fcc;
+      transition: all 0.1s;
+    }
+    button:active { transform: translateY(4px); box-shadow: 0 2px 0px #3f3fcc; }
+    button:disabled { background: #bbb; box-shadow: 0 4px 0px #999; cursor: not-allowed; }
+    
+    .btn-reset { background: #ffbd59; box-shadow: 0 4px 0px #cc9747; }
+    .btn-shuffle { background: #ff66c4; box-shadow: 0 4px 0px #cc529d; }
 
-        .action-bar { display: flex; gap: 15px; margin-top: 10px; }
-        .secondary-btn {
-            flex: 1; background-color: #e0f0ff; color: #3399cc; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: all 0.2s;
-        }
-        .secondary-btn:hover { background-color: #cceeff; }
+    /* 4. 拖拽区域 - 针对手机优化布局 */
+    .drag-area { 
+      display: none; 
+      background: rgba(255,255,255,0.5); 
+      padding: 15px; 
+      border-radius: 25px;
+      border: 3px dashed #5d5dff;
+      margin-top: 20px;
+    }
 
-        .mascot { position: absolute; top: 20px; right: 30px; font-size: 60px; z-index: 10; }
-        
-        .manual-badge {
-            display: none;
-            background: #ffcc00;
-            color: #fff;
-            font-size: 12px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-left: 10px;
-            vertical-align: middle;
-        }
+    .drag-topics {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      justify-content: center;
+      min-height: 80px;
+    }
 
-        @media (max-width: 900px) {
-            .evaluation-area { flex-direction: column; }
-            .status-bar { flex-direction: column; gap: 15px; }
-            .system-description { padding: 12px 20px; }
-            .system-description p { font-size: 14px; }
-        }
-    </style>
+    .drag {
+      background: white;
+      padding: 8px;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      width: 90px; /* 稍微缩小宽度 */
+      text-align: center;
+      cursor: grab;
+      touch-action: none; 
+      z-index: 10;
+      border: 1px solid #ddd;
+    }
+    .drag .topic-emoji { font-size: 2.5rem; }
+    .drag div:last-child { font-size: 0.8rem; }
+
+    /* 手机端拖拽时的特殊样式 */
+    .drag.touch-dragging {
+      position: fixed;
+      z-index: 9999;
+      opacity: 0.85;
+      pointer-events: none;
+      transform: scale(1.1); /* 稍微放大一点点 */
+      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+      background: #fff;
+      border: 2px solid #5d5dff;
+    }
+
+    .zones {
+      display: grid;
+      /* 默认电脑端布局 */
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 15px;
+    }
+
+    .zone {
+      background: #fff;
+      border: 2px dashed #cbd5e0;
+      border-radius: 20px;
+      padding: 10px;
+      min-height: 150px; /* 默认高度 */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background 0.2s;
+    }
+    .zone.drag-over { background: #e0e7ff; border-color: #5d5dff; transform: scale(1.02); }
+    .zone h3 { font-size: 0.9rem; color: #5d5dff; text-align: center; margin-bottom: 10px; }
+
+    /* === 手机端关键优化布局 === */
+    @media (max-width: 768px) {
+      .container { padding: 15px; }
+      
+      /* 强制两列显示，节省垂直空间 */
+      .zones {
+        grid-template-columns: 1fr 1fr; 
+        gap: 8px;
+      }
+      
+      /* 减小盒子高度，让一屏能装下更多 */
+      .zone {
+        min-height: 100px;
+        padding: 5px;
+      }
+      
+      .zone h3 { margin: 5px 0; font-size: 0.8rem; }
+      
+      /* 盒子里的已放置物品缩小 */
+      .zone .drag {
+        width: 100% !important;
+        transform: scale(0.9);
+        margin: 2px 0 !important;
+      }
+    }
+
+    /* 5. 弹窗与总结 */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 1000;
+      align-items: center; justify-content: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 30px;
+      text-align: center;
+      max-width: 80%;
+      border: 6px solid #ff4d4d;
+    }
+
+    .principle {
+      display: none;
+      margin-top: 30px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 25px;
+      border: 4px solid #7ed957;
+      text-align: center;
+      animation: bounceIn 0.8s;
+    }
+
+    @keyframes bounceIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      70% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    .audio-test {
+      position: fixed;
+      top: 10px; right: 10px;
+      z-index: 1001;
+      background: #ff6b6b;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: none;
+      font-size: 0.8rem;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="mascot">👧👦</div>
-        
-        <h1>重庆国际文化交流小使者</h1>
-        <div class="subtitle">Intelligent Capability Assessment System</div>
-        
-        <!-- 系统说明区域 -->
-        <div class="system-description">
-            <h3>系统说明</h3>
-            <p>本系统用于评估学生在模拟交际场景中运用四项交际策略的能力，围绕本地学生向国际友人们介绍重庆的对话任务展开。评估分为三个核心维度：交际策略运用(Talk Smart!)、语言准确性(Talk Clear!)和跨文化友好度(Talk Friendly!)。</p>
-        </div>
-        
-        <div class="status-bar">
-            <div class="status-left">
-                <div id="sys-indicator" class="status-indicator active"></div>
-                <div id="sys-status" class="status-text">系统就绪 | 等待语音输入...</div>
-            </div>
-            <button id="toggle-recording" class="main-btn">
-                <span>🎙️</span> <span id="btn-text">启动实时监测</span>
-            </button>
-        </div>
-        
-        <div class="evaluation-area">
-            <div class="criteria-section">
-                <div class="group-switcher" id="group-selector">
-                    </div>
-                
-                <div style="font-size: 18px; color:#666; margin-bottom:15px; font-weight:bold; display:flex; justify-content:space-between;">
-                    <span>实时评估维度 (可手动点击修改)</span>
-                    <span style="font-size:14px; color:#999;">👇 点击星星即可手动给分</span>
-                </div>
 
-                <div class="criteria-card" id="card-smart">
-                    <div class="criteria-header">
-                        <span class="criteria-icon">💡</span>
-                        <span class="criteria-name">Talk Smart!</span>
-                        <span class="manual-badge">手动给分</span>
-                    </div>
-                    <div class="criteria-desc">策略运用监测：Use our 4 magic tips.</div>
-                    <div class="stars" id="stars-smart">
-                        <span class="star" data-val="1">★</span><span class="star" data-val="2">★</span><span class="star" data-val="3">★</span><span class="star" data-val="4">★</span><span class="star" data-val="5">★</span>
-                    </div>
-                </div>
-                
-                <div class="criteria-card" id="card-clear">
-                    <div class="criteria-header">
-                        <span class="criteria-icon">🎯</span>
-                        <span class="criteria-name">Talk Clear!</span>
-                        <span class="manual-badge">手动给分</span>
-                    </div>
-                    <div class="criteria-desc">语音分析：Good language, good pronunciation.</div>
-                    <div class="stars" id="stars-clear">
-                        <span class="star" data-val="1">★</span><span class="star" data-val="2">★</span><span class="star" data-val="3">★</span><span class="star" data-val="4">★</span><span class="star" data-val="5">★</span>
-                    </div>
-                </div>
-                
-                <div class="criteria-card" id="card-friendly">
-                    <div class="criteria-header">
-                        <span class="criteria-icon">❤️</span>
-                        <span class="criteria-name">Talk Friendly!</span>
-                        <span class="manual-badge">手动给分</span>
-                    </div>
-                    <div class="criteria-desc">情感交互：Smile, share culture, make friends!</div>
-                    <div class="stars" id="stars-friendly">
-                        <span class="star" data-val="1">★</span><span class="star" data-val="2">★</span><span class="star" data-val="3">★</span><span class="star" data-val="4">★</span><span class="star" data-val="5">★</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="results-section">
-                <div class="dashboard-card">
-                    <div class="group-label" id="current-group-label">当前评估对象: 第 1 组</div>
-                    <div class="total-score-display" id="total-score">0</div>
-                    <div class="score-label">Total Score (最终得分)</div>
-                </div>
+<button class="audio-test" onclick="testAllSounds()">🔊 测试音效</button>
 
-                <div class="terminal-window">
-                    <div class="terminal-header">
-                        <span>> AI_TRANSCRIPT_LOG</span>
-                        <span id="terminal-status">● IDLE</span>
-                    </div>
-                    <div class="terminal-content" id="terminal-content">
-                        [SYSTEM] Initialization complete.<br>
-                        [SYSTEM] Ready for audio stream analysis...
-                    </div>
-                </div>
+<div class="container">
+  <h1>🎮 SAFE + C 话题大挑战 🎮</h1>
 
-                <div class="action-bar">
-                    <button class="secondary-btn" id="save-scores">💾 确认并锁定分数</button>
-                    <button class="secondary-btn" id="show-ranking" style="background-color: #ffe6cc; color:#d97706;">🏆 生成最终排行榜</button>
-                </div>
-            </div>
-        </div>
+  <div class="instructions">
+    <p>🌟 <b>任务一：</b> 点选 <b>适合聊天</b> 的话题（SAFE+C 类别）。</p>
+    <p>📦 <b>任务二：</b> 点击"开始分类"，将话题拖进正确的盒子里！</p>
+    <p style="color: #ff4d4d;"><b>小心：</b> 选错不合适的话题会触发警报哦！</p>
+    <p style="color: #5d5dff; font-weight: bold;">🎵 <b>音效已就绪！点击正确话题会有清脆音效！</b></p>
+  </div>
 
-        <div class="ranking-section" id="ranking-section">
-            <div class="ranking-title">最终排行榜 (基于教师确认分数)</div>
-            <table class="ranking-table">
-                <thead>
-                    <tr>
-                        <th>排名</th>
-                        <th>小组</th>
-                        <th>Talk Smart</th>
-                        <th>Talk Clear</th>
-                        <th>Talk Friendly</th>
-                        <th>总分</th>
-                    </tr>
-                </thead>
-                <tbody id="ranking-body">
-                    </tbody>
-            </table>
-        </div>
+  <div class="topics" id="topics"></div>
+
+  <div class="buttons">
+    <button id="startBtn" onclick="goDrag()" disabled>➡️ 开始分类</button>
+    <button class="btn-reset" onclick="resetSelection()">🔄 重置选择</button>
+    <button class="btn-shuffle" onclick="reshuffleTopics()">🔀 乱序话题</button>
+  </div>
+
+  <div class="drag-area" id="dragArea">
+    <h2 style="text-align: center; color: #5d5dff; margin-bottom: 15px; font-size: 1.5rem;">🎯 归类大作战</h2>
+    <div class="drag-topics" id="dragTopics"></div>
+
+    <div class="zones">
+      <div class="zone" data-zone="Sport"><h3>🏀 Sport</h3></div>
+      <div class="zone" data-zone="Art"><h3>🎨 Art</h3></div>
+      <div class="zone" data-zone="Food"><h3>🍜 Food</h3></div>
+      <div class="zone" data-zone="Entertainment & Environment"><h3>🎬 Ent. & Env. (娱乐&环境)</h3></div>
+      <div class="zone" data-zone="Chongqing Specials"><h3>🌶️ Chongqing</h3></div>
     </div>
 
-    <script>
-        // --- 系统配置与变量 ---
-        const CONFIG = {
-            groupCount: 5,
-            keywords: {
-                smart: ['weather', 'food', 'hot pot', 'travel', 'history', 'building', 'delicious', 'spicy', 'try'],
-                friendly: ['hello', 'welcome', 'thank', 'please', 'love', 'happy', 'friend', 'together'],
-                emphatic: ['really', 'very', 'so', 'amazing', 'must']
-            }
-        };
+    <div class="buttons">
+      <button onclick="showRule()" style="background: #7ed957; box-shadow: 0 4px 0px #5fa341;">🏆 完成挑战</button>
+      <button class="btn-reset" onclick="resetDrag()">🔄 重新分类</button>
+    </div>
+  </div>
 
-        let state = {
-            groups: [],
-            currentGroupId: 1,
-            isRecording: false,
-            recognition: null
-        };
+  <div class="principle" id="principle">
+    <h2 style="color: #5d5dff; font-size: 2rem;">🎉 太棒了！</h2>
+    <div style="font-size: 1.2rem; line-height: 1.8;">
+      <strong>S</strong> – Sport（运动）🏃‍♂️<br>
+      <strong>A</strong> – Art（艺术）🎨<br>
+      <strong>F</strong> – Food（食物）🍕<br>
+      <strong>E</strong> – Entertainment & Environment（娱乐与环境）🌍<br>
+      <strong>C</strong> – Chongqing Specials（重庆特色）🏙️
+    </div>
+    <p style="margin-top: 15px; font-weight: bold; color: #7ed957;">✅ 记住 SAFE + C 原则，社交无压力！</p>
+  </div>
+</div>
 
-        // --- 初始化逻辑 ---
-        function init() {
-            // 初始化小组数据
-            for (let i = 1; i <= CONFIG.groupCount; i++) {
-                // manualOverrides: 记录哪些维度是老师手动改过的，AI不再自动覆盖
-                state.groups.push({ 
-                    id: i, 
-                    scores: { smart: 0, clear: 0, friendly: 0 }, 
-                    locked: false,
-                    manualOverrides: { smart: false, clear: false, friendly: false }
-                });
-            }
-            
-            renderGroupTabs();
-            setupSpeechRecognition();
-            bindEvents();
-            bindStarInteractions(); 
+<div class="modal" id="warningModal">
+  <div class="modal-content">
+    <h2 style="font-size: 3rem;">🚫</h2>
+    <h3>哎呀！选错了</h3>
+    <p>这个话题可能让人感到不舒服（隐私或负面）。</p>
+    <p>请选择 <b>SAFE + C</b> 类别中的话题吧！</p>
+    <button onclick="closeModal()" style="background: #ff4d4d; box-shadow: 0 4px 0px #cc3d3d;">我会注意的！</button>
+  </div>
+</div>
+
+<script>
+  // ==================== 音效系统 (简易版) ====================
+  class SoundSystem {
+    constructor() { this.ctx = null; }
+    init() {
+      if (!this.ctx) {
+        try {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AC();
+        } catch(e) {}
+      }
+    }
+    beep(freq, duration, type='sine') {
+      if (!this.ctx) this.init();
+      if (!this.ctx) return;
+      try {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.frequency.value = freq;
+        osc.type = type;
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+        osc.start();
+        osc.stop(this.ctx.currentTime + duration);
+      } catch(e){}
+    }
+    playCorrect() { this.beep(800, 0.1); setTimeout(()=>this.beep(1200, 0.2), 100); }
+    playError() { this.beep(200, 0.4, 'sawtooth'); }
+    playClick() { this.beep(500, 0.05, 'square'); }
+    playSuccess() { 
+      [523, 659, 784].forEach((f, i) => setTimeout(() => this.beep(f, 0.2), i*200));
+    }
+  }
+  const sound = new SoundSystem();
+  // 触摸和点击都尝试初始化音频
+  document.body.addEventListener('touchstart', ()=>sound.init(), {once:true});
+  document.body.addEventListener('click', ()=>sound.init(), {once:true});
+
+  window.testAllSounds = function() {
+    sound.init();
+    sound.playSuccess();
+    const btn = document.querySelector('.audio-test');
+    btn.textContent = "✅";
+    setTimeout(()=>btn.textContent = "🔊 测试音效", 2000);
+  };
+
+  // ==================== 数据 ====================
+  const allTopics = [
+    { html: '<div class="topic-emoji">🏀</div><div>Basketball</div>', cat: 'Sport', bad: false },
+    { html: '<div class="topic-emoji">🏃</div><div>Running</div>', cat: 'Sport', bad: false },
+    { html: '<div class="topic-emoji">🎨</div><div>Painting</div>', cat: 'Art', bad: false },
+    { html: '<div class="topic-emoji">🎬</div><div>Movies</div>', cat: 'Art', bad: false },
+    { html: '<div class="topic-emoji">🍲</div><div>Hot Pot</div>', cat: 'Food', bad: false },
+    { html: '<div class="topic-emoji">🍅</div><div>Tomato & Egg</div>', cat: 'Food', bad: false },
+    { html: '<div class="topic-emoji">🌍</div><div>Travel</div>', cat: 'Entertainment & Environment', bad: false },
+    { html: '<div class="topic-emoji">☀️</div><div>Weather</div>', cat: 'Entertainment & Environment', bad: false },
+    { html: '<div class="topic-emoji">🏙️</div><div>Jiefangbei</div>', cat: 'Chongqing Specials', bad: false },
+    { html: '<div class="topic-emoji">🏯</div><div>Ciqikou</div>', cat: 'Chongqing Specials', bad: false },
+    { html: '<div class="topic-emoji">📅</div><div>Age</div>', cat: '', bad: true },
+    { html: '<div class="topic-emoji">⚖️</div><div>Weight</div>', cat: '', bad: true },
+    { html: '<div class="topic-emoji">💰</div><div>Money</div>', cat: '', bad: true },
+    { html: '<div class="topic-emoji">🗣️</div><div>Arguments</div>', cat: '', bad: true }
+  ];
+
+  // ==================== 逻辑控制 ====================
+  const topicsContainer = document.getElementById('topics');
+  const dragArea = document.getElementById('dragArea');
+  const dragTopics = document.getElementById('dragTopics');
+  const warningModal = document.getElementById('warningModal');
+  const startBtn = document.getElementById('startBtn');
+  let dragged = null;
+
+  function shuffleArray(array) { return array.slice().sort(() => Math.random() - 0.5); }
+
+  function initializeTopics() {
+    topicsContainer.innerHTML = '';
+    shuffleArray(allTopics).forEach(data => {
+      const el = document.createElement('div');
+      el.className = `topic ${data.bad ? 'bad' : ''}`;
+      el.dataset.cat = data.cat;
+      el.dataset.bad = data.bad;
+      el.innerHTML = data.html;
+      
+      el.onclick = () => {
+        sound.init();
+        if (el.dataset.bad === 'true') {
+          sound.playError();
+          warningModal.style.display = 'flex';
+        } else {
+          el.classList.toggle('selected');
+          if(el.classList.contains('selected')) sound.playCorrect();
+          else sound.playClick();
+          updateStartButton();
         }
+      };
+      topicsContainer.appendChild(el);
+    });
+  }
 
-        function bindEvents() {
-            document.getElementById('toggle-recording').addEventListener('click', toggleRecording);
-            document.getElementById('save-scores').addEventListener('click', saveScore);
-            document.getElementById('show-ranking').addEventListener('click', showRankingSection);
+  function updateStartButton() {
+    const count = document.querySelectorAll('.topic.selected').length;
+    startBtn.disabled = count === 0;
+    startBtn.textContent = count > 0 ? `➡️ 开始分类 (${count})` : '➡️ 开始分类';
+  }
+
+  window.closeModal = () => warningModal.style.display = 'none';
+  window.resetSelection = () => {
+    sound.playClick();
+    document.querySelectorAll('.topic').forEach(t => t.classList.remove('selected'));
+    updateStartButton();
+    dragArea.style.display = 'none';
+  };
+  window.reshuffleTopics = () => { sound.playClick(); initializeTopics(); updateStartButton(); };
+
+  // ==================== 拖拽功能 (偏移优化版) ====================
+  window.goDrag = () => {
+    const selected = document.querySelectorAll('.topic.selected');
+    dragTopics.innerHTML = '';
+    sound.playClick();
+    
+    selected.forEach(t => {
+      const d = document.createElement('div');
+      d.className = 'drag';
+      d.draggable = true;
+      d.dataset.cat = t.dataset.cat;
+      d.innerHTML = t.innerHTML;
+      
+      // 电脑端拖拽
+      d.ondragstart = () => { dragged = d; sound.playClick(); };
+
+      // 手机端拖拽 (添加偏移)
+      addMobileDragLogic(d);
+      
+      dragTopics.appendChild(d);
+    });
+    
+    dragArea.style.display = 'block';
+    dragArea.scrollIntoView({behavior:'smooth'});
+    initDropZones();
+  };
+
+  // 手机端优化拖拽逻辑
+  function addMobileDragLogic(el) {
+    let originalX = 0;
+    let originalY = 0;
+    // 偏移量：手指按下时，元素在Y轴上偏移多少像素（负数表示向上）
+    // 这样手指不会挡住图标
+    const Y_OFFSET = -70; 
+
+    el.addEventListener('touchstart', function(e) {
+      sound.init();
+      sound.playClick();
+      
+      const touch = e.targetTouches[0];
+      const rect = el.getBoundingClientRect();
+      originalX = rect.left;
+      originalY = rect.top;
+
+      el.classList.add('touch-dragging');
+      
+      // 初始位置：设置到手指上方一点
+      el.style.left = (touch.clientX - (rect.width/2)) + 'px';
+      el.style.top = (touch.clientY - (rect.height/2) + Y_OFFSET) + 'px';
+      
+    }, {passive: false});
+
+    el.addEventListener('touchmove', function(e) {
+      e.preventDefault(); // 阻止滚动
+      if (!el.classList.contains('touch-dragging')) return;
+
+      const touch = e.targetTouches[0];
+      const rect = el.getBoundingClientRect();
+
+      // 跟随手指移动，保持偏移
+      el.style.left = (touch.clientX - (rect.width/2)) + 'px';
+      el.style.top = (touch.clientY - (rect.height/2) + Y_OFFSET) + 'px';
+    }, {passive: false});
+
+    el.addEventListener('touchend', function(e) {
+      if (!el.classList.contains('touch-dragging')) return;
+      
+      // 为了检测下方元素，先隐藏自己
+      el.style.visibility = 'hidden'; 
+      // 注意：这里需要考虑偏移量。我们检测的是图标中心点对着的位置，而不是手指的位置
+      const touch = e.changedTouches[0];
+      // 检测点 = 手指位置 + 偏移量
+      const checkX = touch.clientX;
+      const checkY = touch.clientY + Y_OFFSET;
+      
+      const elemBelow = document.elementFromPoint(checkX, checkY);
+      el.style.visibility = 'visible'; // 恢复显示
+
+      const zone = elemBelow ? elemBelow.closest('.zone') : null;
+
+      if (zone && el.dataset.cat === zone.dataset.zone) {
+        handleDropSuccess(el, zone);
+      } else {
+        sound.playError();
+        el.classList.remove('touch-dragging');
+        el.style.left = '';
+        el.style.top = '';
+        el.style.animation = "shake 0.4s";
+        setTimeout(() => el.style.animation = "", 400);
+      }
+    });
+  }
+
+  function handleDropSuccess(item, zone) {
+    sound.playCorrect();
+    item.classList.remove('touch-dragging');
+    item.style.left = '';
+    item.style.top = '';
+    
+    const clone = item.cloneNode(true);
+    clone.draggable = false;
+    // 确保克隆体没有手机事件，防止二次拖拽bug
+    // (cloneNode默认不复制addEventListener，所以是安全的)
+    
+    zone.appendChild(clone);
+    item.remove();
+    
+    setTimeout(() => {
+      if (document.querySelectorAll('.drag-topics .drag').length === 0) {
+        document.querySelector('#dragArea .buttons button').style.animation = 'pulse 1s infinite';
+        sound.playCorrect();
+      }
+    }, 100);
+  }
+
+  function initDropZones() {
+    document.querySelectorAll('.zone').forEach(z => {
+      z.ondragover = e => { e.preventDefault(); z.classList.add('drag-over'); };
+      z.ondragleave = () => z.classList.remove('drag-over');
+      z.ondrop = e => {
+        e.preventDefault();
+        z.classList.remove('drag-over');
+        if (dragged && dragged.dataset.cat === z.dataset.zone) {
+          handleDropSuccess(dragged, z);
+        } else {
+          sound.playError();
+          if(dragged) {
+            dragged.style.animation = "shake 0.5s";
+            setTimeout(() => dragged.style.animation = "", 500);
+          }
         }
+        dragged = null;
+      };
+    });
+  }
 
-        function bindStarInteractions() {
-            ['smart', 'clear', 'friendly'].forEach(type => {
-                const container = document.getElementById(`stars-${type}`);
-                const stars = container.querySelectorAll('.star');
-                
-                stars.forEach(star => {
-                    star.addEventListener('click', function() {
-                        const val = parseInt(this.getAttribute('data-val'));
-                        handleManualRating(type, val);
-                    });
-                });
-            });
-        }
+  window.showRule = () => {
+    sound.playSuccess();
+    document.getElementById('principle').style.display = 'block';
+    document.getElementById('principle').scrollIntoView({behavior:'smooth'});
+  };
+  window.resetDrag = () => {
+    sound.playShuffle();
+    document.querySelectorAll('.zone .drag').forEach(d => d.remove());
+    document.querySelector('#dragArea .buttons button').style.animation = 'none';
+    goDrag();
+  };
 
-        function handleManualRating(type, val) {
-            const g = state.groups.find(x => x.id === state.currentGroupId);
-            
-            if (g.locked) {
-                alert("本组分数已锁定，无法修改。");
-                return;
-            }
+  window.onload = function() {
+    initializeTopics();
+    warningModal.onclick = (e) => { if(e.target === warningModal) warningModal.style.display = 'none'; }
+  };
+</script>
 
-            g.scores[type] = val;
-            g.manualOverrides[type] = true;
-
-            updateStars(type, val);
-            updateTotalDisplay(g.scores.smart + g.scores.clear + g.scores.friendly);
-            logToTerminal(`[MANUAL] Teacher set ${type} score to ${val}.`);
-        }
-
-        // --- UI 渲染控制 ---
-        function renderGroupTabs() {
-            const container = document.getElementById('group-selector');
-            container.innerHTML = '';
-            state.groups.forEach(g => {
-                const btn = document.createElement('button');
-                btn.className = `group-tab ${g.id === state.currentGroupId ? 'active' : ''}`;
-                btn.textContent = `第 ${g.id} 组`;
-                btn.onclick = () => switchGroup(g.id);
-                container.appendChild(btn);
-            });
-        }
-
-        function switchGroup(id) {
-            if(state.isRecording) {
-                alert("请先停止当前评估（点击红色停止按钮）再切换小组。");
-                return;
-            }
-            state.currentGroupId = id;
-            document.getElementById('current-group-label').textContent = `当前评估对象: 第 ${id} 组`;
-            renderGroupTabs();
-            
-            const g = state.groups.find(x => x.id === id);
-            updateStars('smart', g.scores.smart);
-            updateStars('clear', g.scores.clear);
-            updateStars('friendly', g.scores.friendly);
-            updateTotalDisplay(g.scores.smart + g.scores.clear + g.scores.friendly);
-            
-            logToTerminal(`[SYSTEM] Switched to Group ${id}. Ready.`);
-            
-            const btn = document.getElementById('save-scores');
-            if(g.locked) {
-                btn.innerHTML = "✅ 分数已锁定";
-                btn.style.backgroundColor = "#ccffcc";
-            } else {
-                btn.innerHTML = "💾 确认并锁定分数";
-                btn.style.backgroundColor = "#e0f0ff";
-            }
-        }
-
-        function updateStars(type, score) {
-            const stars = document.getElementById(`stars-${type}`).children;
-            for(let i=0; i<5; i++) {
-                if(i < score) stars[i].classList.add('active');
-                else stars[i].classList.remove('active');
-            }
-        }
-
-        function updateTotalDisplay(total) {
-            const el = document.getElementById('total-score');
-            el.style.transform = "scale(1.2)";
-            setTimeout(() => el.style.transform = "scale(1)", 200);
-            el.textContent = total;
-        }
-
-        function logToTerminal(text, isAnalysis = false) {
-            const content = document.getElementById('terminal-content');
-            const line = document.createElement('div');
-            line.style.marginTop = "5px";
-            if(isAnalysis) {
-                line.style.color = "#fff";
-                line.innerHTML = `> ${text}`; 
-            } else {
-                line.style.color = "#8faec9";
-                line.innerText = text;
-            }
-            const tempLine = document.getElementById('temp-interim-line');
-            if(tempLine) {
-                content.insertBefore(line, tempLine);
-            } else {
-                content.appendChild(line);
-            }
-            
-            // 修正：确保滚动条到底部
-            content.scrollTop = content.scrollHeight;
-        }
-
-        function updateInterimLog(text) {
-            const content = document.getElementById('terminal-content');
-            let tempLine = document.getElementById('temp-interim-line');
-            
-            if (!tempLine) {
-                tempLine = document.createElement('div');
-                tempLine.id = 'temp-interim-line';
-                tempLine.style.color = "#aaa"; 
-                tempLine.style.fontStyle = "italic";
-                tempLine.style.marginTop = "5px";
-                content.appendChild(tempLine);
-            }
-            
-            tempLine.innerText = text;
-            
-            // 修正：确保实时显示时也滚动到底部
-            content.scrollTop = content.scrollHeight;
-        }
-
-        function removeInterimLog() {
-            const tempLine = document.getElementById('temp-interim-line');
-            if (tempLine) {
-                tempLine.remove();
-            }
-        }
-
-        // --- 核心业务逻辑：语音识别与评分 ---
-        function setupSpeechRecognition() {
-            if ('webkitSpeechRecognition' in window) {
-                const recognition = new webkitSpeechRecognition();
-                recognition.continuous = true;
-                recognition.interimResults = true; 
-                recognition.lang = 'en-US'; 
-                
-                recognition.onstart = () => {
-                    state.isRecording = true;
-                    updateStatusUI(true);
-                    logToTerminal("[SYSTEM] Listening started...", false);
-                };
-                
-                recognition.onend = () => {
-                    if (state.isRecording) {
-                        console.log("Stream restart...");
-                        recognition.start();
-                    } else {
-                        updateStatusUI(false);
-                    }
-                };
-
-                recognition.onresult = (event) => {
-                    let interimTranscript = '';
-                    let finalTranscript = '';
-
-                    for (let i = event.resultIndex; i < event.results.length; ++i) {
-                        if (event.results[i].isFinal) {
-                            finalTranscript += event.results[i][0].transcript;
-                        } else {
-                            interimTranscript += event.results[i][0].transcript;
-                        }
-                    }
-
-                    if (finalTranscript) {
-                        removeInterimLog(); 
-                        analyzeSpeech(finalTranscript, 1); 
-                    }
-
-                    if (interimTranscript) {
-                        updateInterimLog(`> ${interimTranscript} ...`);
-                    }
-                };
-
-                recognition.onerror = (event) => {
-                    console.error(event.error);
-                    if (event.error === 'no-speech') return; 
-                    logToTerminal(`[ERROR] ${event.error}`, false);
-                };
-                
-                state.recognition = recognition;
-            } else {
-                logToTerminal("[ERROR] Browser not supported. Use Chrome.");
-            }
-        }
-
-        function toggleRecording() {
-            if (state.isRecording) {
-                state.isRecording = false; 
-                state.recognition.stop();
-            } else {
-                const g = state.groups.find(x => x.id === state.currentGroupId);
-                if (g.locked) {
-                    alert("该组分数已锁定，请先切换到下一组。");
-                    return;
-                }
-                state.recognition.start();
-            }
-        }
-
-        function updateStatusUI(isRec) {
-            const ind = document.getElementById('sys-indicator');
-            const txt = document.getElementById('sys-status');
-            const btn = document.getElementById('toggle-recording');
-            const btnTxt = document.getElementById('btn-text');
-            const termStatus = document.getElementById('terminal-status');
-
-            if (isRec) {
-                ind.className = "status-indicator recording";
-                txt.textContent = "正在实时采集语音数据...";
-                txt.style.color = "#ff4444";
-                btn.className = "main-btn stop";
-                btnTxt.textContent = "停止监测 (开始手动评分)";
-                termStatus.textContent = "● ANALYZING";
-                termStatus.style.color = "#0f0";
-            } else {
-                ind.className = "status-indicator active";
-                txt.textContent = "监测暂停 | 请教师手动给分";
-                txt.style.color = "#555";
-                btn.className = "main-btn";
-                btnTxt.textContent = "继续实时监测";
-                termStatus.textContent = "● PAUSED";
-                termStatus.style.color = "#888";
-            }
-        }
-
-        function analyzeSpeech(text, confidence) {
-            const g = state.groups.find(x => x.id === state.currentGroupId);
-            if (g.locked) return;
-
-            const lowerText = text.toLowerCase();
-            
-            // 关键词高亮
-            let displayText = text;
-            const allKeywords = [...CONFIG.keywords.smart, ...CONFIG.keywords.friendly, ...CONFIG.keywords.emphatic];
-            allKeywords.forEach(k => {
-                const regex = new RegExp(`\\b${k}\\b`, 'gi');
-                displayText = displayText.replace(regex, `<span class="keyword-highlight">${k}</span>`);
-            });
-            logToTerminal(displayText, true);
-
-            // 评分逻辑
-            if (!g.manualOverrides.smart) {
-                let smartHits = 0;
-                [...CONFIG.keywords.smart, ...CONFIG.keywords.emphatic].forEach(k => {
-                    if(lowerText.includes(k)) smartHits++;
-                });
-                const sScore = Math.min(5, Math.ceil(smartHits / 1.5));
-                g.scores.smart = Math.max(g.scores.smart, sScore);
-                updateStars('smart', g.scores.smart);
-            }
-            
-            if (!g.manualOverrides.friendly) {
-                let friendlyHits = 0;
-                CONFIG.keywords.friendly.forEach(k => {
-                    if(lowerText.includes(k)) friendlyHits++;
-                });
-                const fScore = Math.min(5, Math.ceil(friendlyHits / 1.2));
-                g.scores.friendly = Math.max(g.scores.friendly, fScore);
-                updateStars('friendly', g.scores.friendly);
-            }
-
-            if (!g.manualOverrides.clear) {
-                let cScore = 0;
-                if (text.length > 10) cScore = 2;
-                if (text.length > 30) cScore = 3;
-                if (confidence > 0.85 && text.length > 20) cScore += 1;
-                if (confidence > 0.92) cScore += 1;
-                cScore = Math.min(5, Math.max(1, cScore));
-                g.scores.clear = Math.max(g.scores.clear, cScore);
-                updateStars('clear', g.scores.clear);
-            }
-
-            updateTotalDisplay(g.scores.smart + g.scores.clear + g.scores.friendly);
-        }
-
-        function saveScore() {
-            const g = state.groups.find(x => x.id === state.currentGroupId);
-            g.locked = true;
-            const btn = document.getElementById('save-scores');
-            
-            btn.innerHTML = "✅ 分数已锁定";
-            btn.style.backgroundColor = "#ccffcc";
-            btn.style.color = "#008800";
-            
-            logToTerminal(`[SYSTEM] Scores for Group ${g.id} finalized: Smart=${g.scores.smart}, Clear=${g.scores.clear}, Friendly=${g.scores.friendly}`);
-        }
-
-        function showRankingSection() {
-            const section = document.getElementById('ranking-section');
-            const tbody = document.getElementById('ranking-body');
-            tbody.innerHTML = '';
-
-            const sorted = [...state.groups].sort((a, b) => {
-                const totalA = a.scores.smart + a.scores.clear + a.scores.friendly;
-                const totalB = b.scores.smart + b.scores.clear + b.scores.friendly;
-                return totalB - totalA;
-            });
-
-            sorted.forEach((g, index) => {
-                const total = g.scores.smart + g.scores.clear + g.scores.friendly;
-                const tr = document.createElement('tr');
-                
-                let rankDisplay = index + 1;
-                if(index === 0) rankDisplay = '<span class="medal gold">🥇</span> 1';
-                if(index === 1) rankDisplay = '<span class="medal silver">🥈</span> 2';
-                if(index === 2) rankDisplay = '<span class="medal bronze">🥉</span> 3';
-
-                tr.innerHTML = `
-                    <td>${rankDisplay}</td>
-                    <td style="font-weight:bold;">第 ${g.id} 组</td>
-                    <td>${g.scores.smart}</td>
-                    <td>${g.scores.clear}</td>
-                    <td>${g.scores.friendly}</td>
-                    <td style="color:#ff6666; font-weight:bold; font-size:22px;">${total}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            section.style.display = 'block';
-            section.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        init();
-    </script>
 </body>
 </html>
