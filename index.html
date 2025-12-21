@@ -2,49 +2,54 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SAFE + C 极速版</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🌈 SAFE + C 趣味话题分类大挑战 🌈</title>
   <style>
-    /* === 极速版样式：去除了所有复杂的渲染特效 === */
-    
+    /* === 1. 基础设置 (保留原字体栈，但移除卡顿特效) === */
     body {
-      /* 使用系统默认字体 */
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif;
-      /* 纯色背景 */
-      background-color: #e0f2fe; 
+      font-family: "Quicksand", "Comic Sans MS", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
       margin: 0;
       padding: 20px;
       min-height: 100vh;
-      color: #333;
+      color: #444;
+      /* 防止手机端左右晃动 */
+      overflow-x: hidden; 
+      /* 禁止移动端默认长按选中 */
+      -webkit-user-select: none;
+      user-select: none;
     }
 
     h1 { 
       text-align: center; 
-      color: #2563eb; 
-      font-size: 2rem;
-      margin-bottom: 20px;
+      color: #5d5dff; 
+      text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
+      font-size: 2.2rem;
+      margin-bottom: 30px;
     }
 
     .container { 
-      max-width: 1000px; 
+      max-width: 1100px; 
       margin: auto; 
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 20px;
-      border: 2px solid #bfdbfe;
+      /* 移除 backdrop-filter 以提升手机性能，改为纯净白底 */
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 40px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
     }
 
+    /* 指示牌样式 - 还原 */
     .instructions {
-      background: #fffbeb;
-      padding: 15px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      border: 2px solid #fcd34d;
-      color: #92400e;
+      background: #fff;
+      padding: 20px;
+      border-radius: 25px;
+      margin-bottom: 30px;
+      border: 3px solid #ffde59;
+      box-shadow: 5px 5px 0px #ffde59;
     }
-    .instructions p { margin: 5px 0; }
+    .instructions p { margin: 8px 0; font-size: 1.1rem; }
 
-    /* 话题网格 */
+    /* 2. 话题卡片 */
     .topics {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -53,202 +58,215 @@
     }
     
     .topic {
-      background: #f8fafc;
-      border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 10px;
+      background: #fff;
+      border-radius: 24px;
+      padding: 15px;
       text-align: center;
       cursor: pointer;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+      transition: transform 0.2s, background-color 0.2s;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 140px;
-      transition: background-color 0.2s;
-      /* 关键修改：移除了所有针对 .bad 类的样式，所有卡片初始外观完全一致 */
+      height: 150px;
+      border: 4px solid transparent; /* 预留边框位置 */
+      position: relative;
     }
 
     .topic:hover { 
-      background-color: #f1f5f9;
-      border-color: #cbd5e1;
+      transform: translateY(-5px); 
     }
 
+    /* Emoji 替代图片，解决加载慢 */
     .topic-emoji {
-      font-size: 3rem;
-      margin-bottom: 8px;
+      font-size: 3.5rem;
+      margin-bottom: 10px;
       line-height: 1;
     }
-
-    .topic div:last-child { 
-      font-weight: bold; 
-      font-size: 1rem; 
-      color: #475569; 
-    }
-
-    /* 只有被选中的正确话题才会变色 */
-    .topic.selected { 
-      background-color: #dcfce7;
-      border-color: #22c55e;
-      position: relative;
-    }
-    .topic.selected::after {
-      content: "✓";
-      position: absolute;
-      top: 5px;
-      right: 8px;
-      color: #22c55e;
-      font-weight: bold;
-    }
-
-    /* 按钮优化 */
-    .buttons { display: flex; justify-content: center; gap: 15px; margin: 25px 0; flex-wrap: wrap; }
     
+    .topic div:last-child { font-weight: bold; font-size: 1.1rem; color: #555; }
+
+    /* 选中与错误样式 */
+    .topic.selected { 
+      border-color: #7ed957; 
+      background: #f0fff0;
+      transform: scale(1.05);
+    }
+    .topic.selected::before {
+      content: "⭐";
+      position: absolute;
+      top: 5px; right: 5px;
+      font-size: 1.5rem;
+    }
+
+    /* 移除了 bad 类的特殊样式，让它和普通话题一样 */
+    .topic.bad { opacity: 1; filter: none; }
+
+    /* 3. 按钮美化 */
+    .buttons { display: flex; justify-content: center; gap: 20px; margin: 30px 0; flex-wrap: wrap; }
     button {
-      padding: 12px 30px;
-      font-size: 1rem;
-      border-radius: 8px;
+      padding: 15px 35px;
+      font-size: 1.1rem;
+      border-radius: 50px;
       border: none;
       cursor: pointer;
-      background: #3b82f6;
+      background: #5d5dff;
       color: white;
       font-weight: bold;
-      border-bottom: 4px solid #1d4ed8; 
+      box-shadow: 0 6px 0px #3f3fcc;
+      transition: all 0.1s;
     }
-    button:active { 
-      transform: translateY(2px); 
-      border-bottom-width: 2px;
-      margin-top: 2px;
-    }
-    button:disabled { 
-      background: #94a3b8; 
-      border-bottom-color: #64748b; 
-      cursor: not-allowed; 
-    }
+    button:active { transform: translateY(4px); box-shadow: 0 2px 0px #3f3fcc; }
+    button:disabled { background: #bbb; box-shadow: 0 6px 0px #999; cursor: not-allowed; }
     
-    .btn-reset { background: #f59e0b; border-bottom-color: #b45309; }
-    .btn-shuffle { background: #ec4899; border-bottom-color: #be185d; }
+    .btn-reset { background: #ffbd59; box-shadow: 0 6px 0px #cc9747; }
+    .btn-shuffle { background: #ff66c4; box-shadow: 0 6px 0px #cc529d; }
 
-    /* 拖拽区域 */
+    /* 4. 拖拽区域 */
     .drag-area { 
       display: none; 
-      background: #f0f9ff; 
-      padding: 20px; 
-      border-radius: 20px;
-      border: 3px dashed #3b82f6;
-      margin-top: 30px;
+      background: rgba(255,255,255,0.5); 
+      padding: 30px; 
+      border-radius: 35px;
+      border: 4px dashed #5d5dff;
+      margin-top: 40px;
     }
 
     .drag-topics {
       display: flex;
-      gap: 10px;
+      gap: 15px;
       flex-wrap: wrap;
-      margin-bottom: 30px;
+      margin-bottom: 40px;
       justify-content: center;
-      min-height: 100px;
+      min-height: 120px;
     }
 
     .drag {
       background: white;
       padding: 10px;
-      border: 2px solid #cbd5e0;
-      border-radius: 10px;
-      cursor: grab;
+      border-radius: 20px;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
       width: 100px;
       text-align: center;
+      cursor: grab;
+      /* 手机端拖拽关键属性 */
+      touch-action: none; 
+      position: relative;
+      z-index: 10;
+    }
+    /* 手机端被拖动时的样式 */
+    .drag.touch-dragging {
+      position: fixed;
+      z-index: 9999;
+      opacity: 0.9;
+      pointer-events: none; /* 让触摸事件穿透到下方的 box */
+      transform: scale(1.1);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
     }
 
     .zones {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 10px;
+      gap: 15px;
     }
 
     .zone {
       background: #fff;
-      border: 2px dashed #94a3b8;
-      border-radius: 15px;
-      padding: 10px;
+      border: 3px dashed #cbd5e0;
+      border-radius: 25px;
+      padding: 15px;
       min-height: 180px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      transition: background 0.2s;
     }
-    .zone.drag-over { background: #dbeafe; border-color: #2563eb; }
-    .zone h3 { font-size: 0.95rem; color: #2563eb; margin: 10px 0; }
+    .zone.drag-over { background: #e0e7ff; border-color: #5d5dff; transform: scale(1.02); }
+    .zone h3 { font-size: 1rem; color: #5d5dff; text-align: center; margin-bottom: 15px; }
 
-    /* 弹窗简化 */
+    /* 5. 弹窗与总结 - 文本还原 */
     .modal {
       display: none;
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5); 
+      background: rgba(0,0,0,0.6);
       z-index: 1000;
       align-items: center; justify-content: center;
     }
     .modal-content {
       background: white;
-      padding: 30px;
-      border-radius: 20px;
+      padding: 40px;
+      border-radius: 35px;
       text-align: center;
-      max-width: 350px;
-      border: 4px solid #ef4444;
+      max-width: 80%;
+      border: 8px solid #ff4d4d;
     }
 
     .principle {
       display: none;
-      margin-top: 30px;
+      margin-top: 40px;
       padding: 30px;
-      background: #f0fdf4;
-      border-radius: 20px;
-      border: 4px solid #22c55e;
+      background: #fff;
+      border-radius: 35px;
+      border: 5px solid #7ed957;
       text-align: center;
+      animation: bounceIn 0.8s;
     }
 
-    /* 辅助类 */
-    .dragged-out { display: none; }
+    @keyframes bounceIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      70% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
     
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
     }
-    
-    /* 音频测试按钮 */
+
+    /* 声音测试按钮 */
     .audio-test {
       position: fixed;
       top: 10px; right: 10px;
-      background: #ef4444;
+      z-index: 1001;
+      background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
       color: white;
       padding: 8px 15px;
-      border-radius: 20px;
+      border-radius: 25px;
       border: none;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-weight: bold;
+      box-shadow: 0 4px 0px #cc5555;
     }
+    .audio-test:active { transform: translateY(2px); box-shadow: 0 2px 0px #cc5555; }
   </style>
 </head>
 <body>
 
-<button class="audio-test" onclick="testAllSounds()">🔊 声音</button>
+<button class="audio-test" onclick="testAllSounds()">🔊 测试音效</button>
 
 <div class="container">
-  <h1>🎮 SAFE + C 分类挑战</h1>
+  <h1>🎮 SAFE + C 话题大挑战 🎮</h1>
 
   <div class="instructions">
-    <p>🌟 <b>任务一：</b> 点选适合聊天的话题（SAFE+C）。</p>
-    <p>📦 <b>任务二：</b> 点击"开始分类"，拖拽话题到盒子里。</p>
+    <p>🌟 <b>任务一：</b> 点选 <b>适合聊天</b> 的话题（SAFE+C 类别）。</p>
+    <p>📦 <b>任务二：</b> 点击"开始分类"，将话题拖进正确的盒子里！</p>
+    <p style="color: #ff4d4d;"><b>小心：</b> 选错不合适的话题会触发警报哦！</p>
+    <p style="color: #5d5dff; font-weight: bold;">🎵 <b>音效已就绪！点击正确话题会有清脆音效！</b></p>
   </div>
 
   <div class="topics" id="topics"></div>
 
   <div class="buttons">
     <button id="startBtn" onclick="goDrag()" disabled>➡️ 开始分类</button>
-    <button class="btn-reset" onclick="resetSelection()">🔄 重置</button>
-    <button class="btn-shuffle" onclick="reshuffleTopics()">🔀 乱序</button>
+    <button class="btn-reset" onclick="resetSelection()">🔄 重置选择</button>
+    <button class="btn-shuffle" onclick="reshuffleTopics()">🔀 乱序话题</button>
   </div>
 
   <div class="drag-area" id="dragArea">
-    <h2 style="text-align: center; color: #2563eb; margin-bottom: 20px;">🎯 归类大作战</h2>
+    <h2 style="text-align: center; color: #5d5dff; margin-bottom: 25px;">🎯 归类大作战</h2>
     <div class="drag-topics" id="dragTopics"></div>
 
     <div class="zones">
@@ -260,44 +278,44 @@
     </div>
 
     <div class="buttons">
-      <button onclick="showRule()" style="background: #22c55e; border-bottom-color: #15803d;">🏆 完成</button>
-      <button class="btn-reset" onclick="resetDrag()">🔄 重新</button>
+      <button onclick="showRule()" style="background: #7ed957; box-shadow: 0 6px 0px #5fa341;">🏆 完成挑战</button>
+      <button class="btn-reset" onclick="resetDrag()">🔄 重新分类</button>
     </div>
   </div>
 
   <div class="principle" id="principle">
-    <h2 style="color: #2563eb;">🎉 太棒了！</h2>
-    <div style="font-size: 1.2rem; line-height: 1.8; text-align: left; display: inline-block;">
-      <strong>S</strong> – Sport（运动）<br>
-      <strong>A</strong> – Art（艺术）<br>
-      <strong>F</strong> – Food（食物）<br>
-      <strong>E</strong> – Entertainment & Environment<br>
-      <strong>C</strong> – Chongqing Specials
+    <h2 style="color: #5d5dff; font-size: 2.5rem;">🎉 太棒了！</h2>
+    <div style="font-size: 1.5rem; line-height: 2;">
+      <strong>S</strong> – Sport（运动）🏃‍♂️<br>
+      <strong>A</strong> – Art（艺术）🎨<br>
+      <strong>F</strong> – Food（食物）🍕<br>
+      <strong>E</strong> – Entertainment & Environment（娱乐与环境）🌍<br>
+      <strong>C</strong> – Chongqing Specials（重庆特色）🏙️
     </div>
+    <p style="margin-top: 20px; font-weight: bold; color: #7ed957;">✅ 记住 SAFE + C 原则，社交无压力！</p>
   </div>
 </div>
 
 <div class="modal" id="warningModal">
   <div class="modal-content">
-    <h2 style="font-size: 3rem; margin: 0;">🚫</h2>
-    <h3>哎呀！</h3>
-    <p>这个话题不太合适哦（隐私或负面）。</p>
-    <button onclick="closeModal()" style="background: #ef4444; border-bottom-color: #b91c1c; margin-top: 15px;">好的</button>
+    <h2 style="font-size: 3rem;">🚫</h2>
+    <h3>哎呀！选错了</h3>
+    <p>这个话题可能让人感到不舒服（隐私或负面）。</p>
+    <p>请选择 <b>SAFE + C</b> 类别中的话题吧！</p>
+    <button onclick="closeModal()" style="background: #ff4d4d; box-shadow: 0 6px 0px #cc3d3d;">我会注意的！</button>
   </div>
 </div>
 
 <script>
-  // === 极简化的音效系统 ===
+  // ==================== 音效系统 (简易版) ====================
   class SoundSystem {
-    constructor() {
-      this.ctx = null;
-    }
+    constructor() { this.ctx = null; }
     init() {
       if (!this.ctx) {
         try {
           const AC = window.AudioContext || window.webkitAudioContext;
           this.ctx = new AC();
-        } catch(e) { console.log('Audio disabled'); }
+        } catch(e) {}
       }
     }
     beep(freq, duration, type='sine') {
@@ -310,128 +328,242 @@
         osc.type = type;
         osc.connect(gain);
         gain.connect(this.ctx.destination);
-        gain.gain.setValueAtTime(0.1, this.ctx.currentTime); 
+        gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
         osc.start();
         osc.stop(this.ctx.currentTime + duration);
-      } catch(e) {}
+      } catch(e){}
     }
-    playCorrect() { this.beep(880, 0.1); setTimeout(()=>this.beep(1760, 0.1), 100); }
-    playError() { this.beep(150, 0.3, 'sawtooth'); }
-    playClick() { this.beep(400, 0.05, 'square'); }
+    playCorrect() { this.beep(800, 0.1); setTimeout(()=>this.beep(1200, 0.2), 100); }
+    playError() { this.beep(200, 0.4, 'sawtooth'); }
+    playClick() { this.beep(500, 0.05, 'square'); }
     playSuccess() { 
-      [523, 659, 784].forEach((f, i) => setTimeout(() => this.beep(f, 0.2), i*200)); 
+      [523, 659, 784].forEach((f, i) => setTimeout(() => this.beep(f, 0.2), i*200));
     }
   }
-
   const sound = new SoundSystem();
-  document.body.addEventListener('click', () => sound.init(), {once:true});
-  window.testAllSounds = () => sound.playSuccess();
+  document.body.addEventListener('click', ()=>sound.init(), {once:true});
+  document.body.addEventListener('touchstart', ()=>sound.init(), {once:true}); // 手机端激活声音
 
-  // === 游戏数据 ===
+  window.testAllSounds = function() {
+    sound.init();
+    sound.playSuccess();
+    const btn = document.querySelector('.audio-test');
+    btn.textContent = "✅ 播放中...";
+    setTimeout(()=>btn.textContent = "🔊 测试音效", 2000);
+  };
+
+  // ==================== 数据 (使用 Emoji, 原生文字) ====================
   const allTopics = [
     { html: '<div class="topic-emoji">🏀</div><div>Basketball</div>', cat: 'Sport', bad: false },
     { html: '<div class="topic-emoji">🏃</div><div>Running</div>', cat: 'Sport', bad: false },
     { html: '<div class="topic-emoji">🎨</div><div>Painting</div>', cat: 'Art', bad: false },
     { html: '<div class="topic-emoji">🎬</div><div>Movies</div>', cat: 'Art', bad: false },
     { html: '<div class="topic-emoji">🍲</div><div>Hot Pot</div>', cat: 'Food', bad: false },
-    { html: '<div class="topic-emoji">🍅</div><div>Tomato Egg</div>', cat: 'Food', bad: false },
+    { html: '<div class="topic-emoji">🍅</div><div>Tomato & Egg</div>', cat: 'Food', bad: false },
     { html: '<div class="topic-emoji">🌍</div><div>Travel</div>', cat: 'Entertainment & Environment', bad: false },
     { html: '<div class="topic-emoji">☀️</div><div>Weather</div>', cat: 'Entertainment & Environment', bad: false },
     { html: '<div class="topic-emoji">🏙️</div><div>Jiefangbei</div>', cat: 'Chongqing Specials', bad: false },
     { html: '<div class="topic-emoji">🏯</div><div>Ciqikou</div>', cat: 'Chongqing Specials', bad: false },
+    // 负面话题 (外观与上方完全一致)
     { html: '<div class="topic-emoji">📅</div><div>Age</div>', cat: '', bad: true },
     { html: '<div class="topic-emoji">⚖️</div><div>Weight</div>', cat: '', bad: true },
     { html: '<div class="topic-emoji">💰</div><div>Money</div>', cat: '', bad: true },
     { html: '<div class="topic-emoji">🗣️</div><div>Arguments</div>', cat: '', bad: true }
   ];
 
-  // === 逻辑控制 ===
-  const topicsEl = document.getElementById('topics');
+  // ==================== 逻辑控制 ====================
+  const topicsContainer = document.getElementById('topics');
   const dragArea = document.getElementById('dragArea');
   const dragTopics = document.getElementById('dragTopics');
-  const modal = document.getElementById('warningModal');
+  const warningModal = document.getElementById('warningModal');
   const startBtn = document.getElementById('startBtn');
-  let draggedItem = null;
+  let dragged = null;
 
-  function init() {
-    topicsEl.innerHTML = '';
-    allTopics.sort(() => Math.random() - 0.5).forEach(t => {
-      const div = document.createElement('div');
-      // 注意：虽然这里保留了 bad 类名用于逻辑判断，但 CSS 中已没有针对 .bad 的样式
-      div.className = `topic ${t.bad ? 'bad' : ''}`;
-      div.innerHTML = t.html;
-      div.dataset.cat = t.cat;
-      div.dataset.bad = t.bad;
-      div.onclick = () => {
+  function shuffleArray(array) { return array.slice().sort(() => Math.random() - 0.5); }
+
+  function initializeTopics() {
+    topicsContainer.innerHTML = '';
+    shuffleArray(allTopics).forEach(data => {
+      const el = document.createElement('div');
+      // 注意：保留 bad 类用于逻辑，但 CSS 中 bad 没有特殊样式
+      el.className = `topic ${data.bad ? 'bad' : ''}`;
+      el.dataset.cat = data.cat;
+      el.dataset.bad = data.bad;
+      el.innerHTML = data.html;
+      
+      el.onclick = () => {
         sound.init();
-        if (t.bad) {
-          // 点击了负面话题：报错、弹窗，但不改变外观
+        if (el.dataset.bad === 'true') {
           sound.playError();
-          modal.style.display = 'flex';
+          warningModal.style.display = 'flex';
         } else {
-          // 点击了正确话题：变绿
-          div.classList.toggle('selected');
-          if(div.classList.contains('selected')) sound.playCorrect();
+          el.classList.toggle('selected');
+          if(el.classList.contains('selected')) sound.playCorrect();
           else sound.playClick();
-          updateBtn();
+          updateStartButton();
         }
       };
-      topicsEl.appendChild(div);
+      topicsContainer.appendChild(el);
     });
   }
 
-  function updateBtn() {
+  function updateStartButton() {
     const count = document.querySelectorAll('.topic.selected').length;
     startBtn.disabled = count === 0;
     startBtn.textContent = count > 0 ? `➡️ 开始分类 (${count})` : '➡️ 开始分类';
   }
 
-  window.closeModal = () => modal.style.display = 'none';
+  window.closeModal = () => warningModal.style.display = 'none';
   window.resetSelection = () => {
     sound.playClick();
-    document.querySelectorAll('.topic.selected').forEach(e => e.classList.remove('selected'));
-    updateBtn();
+    document.querySelectorAll('.topic').forEach(t => t.classList.remove('selected'));
+    updateStartButton();
     dragArea.style.display = 'none';
   };
-  window.reshuffleTopics = () => { sound.playClick(); init(); updateBtn(); };
+  window.reshuffleTopics = () => { sound.playClick(); initializeTopics(); updateStartButton(); };
 
+  // ==================== 拖拽功能 (含手机端修复) ====================
   window.goDrag = () => {
-    sound.playClick();
-    dragTopics.innerHTML = '';
     const selected = document.querySelectorAll('.topic.selected');
-    selected.forEach(s => {
+    dragTopics.innerHTML = '';
+    sound.playClick();
+    
+    selected.forEach(t => {
       const d = document.createElement('div');
       d.className = 'drag';
+      // 电脑端拖拽属性
       d.draggable = true;
-      d.innerHTML = s.innerHTML;
-      d.dataset.cat = s.dataset.cat;
-      d.ondragstart = () => draggedItem = d;
+      d.dataset.cat = t.dataset.cat;
+      d.innerHTML = t.innerHTML;
+      
+      // 1. 电脑端事件
+      d.ondragstart = (e) => { 
+        dragged = d; 
+        sound.playClick(); 
+      };
+
+      // 2. 手机端触摸事件 (模拟拖拽)
+      addMobileDragLogic(d);
+      
       dragTopics.appendChild(d);
     });
+    
     dragArea.style.display = 'block';
     dragArea.scrollIntoView({behavior:'smooth'});
-    initZones();
+    initDropZones();
   };
 
-  function initZones() {
+  // 手机端专用拖拽逻辑
+  function addMobileDragLogic(el) {
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let originalX = 0;
+    let originalY = 0;
+
+    el.addEventListener('touchstart', function(e) {
+      sound.init(); // 确保声音初始化
+      sound.playClick();
+      
+      const touch = e.targetTouches[0];
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+      
+      const rect = el.getBoundingClientRect();
+      originalX = rect.left;
+      originalY = rect.top;
+
+      // 创建一个克隆体用于跟随手指，避免打乱布局
+      el.classList.add('touch-dragging');
+      // 设置初始位置为当前位置
+      el.style.left = originalX + 'px';
+      el.style.top = originalY + 'px';
+      // 计算偏移量，保证手指在按下的位置拖动
+      el.dataset.offsetX = touchStartX - originalX;
+      el.dataset.offsetY = touchStartY - originalY;
+    }, {passive: false});
+
+    el.addEventListener('touchmove', function(e) {
+      e.preventDefault(); // 阻止页面滚动
+      if (!el.classList.contains('touch-dragging')) return;
+
+      const touch = e.targetTouches[0];
+      const x = touch.clientX - parseFloat(el.dataset.offsetX);
+      const y = touch.clientY - parseFloat(el.dataset.offsetY);
+      
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+    }, {passive: false});
+
+    el.addEventListener('touchend', function(e) {
+      if (!el.classList.contains('touch-dragging')) return;
+      
+      // 暂时隐藏自己，以便检测下方元素
+      el.style.display = 'none';
+      const touch = e.changedTouches[0];
+      const elemBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+      el.style.display = 'block'; // 恢复显示
+
+      // 查找是否落在了 zone 里
+      const zone = elemBelow ? elemBelow.closest('.zone') : null;
+
+      if (zone && el.dataset.cat === zone.dataset.zone) {
+        // 成功放入
+        handleDropSuccess(el, zone);
+      } else {
+        // 失败，弹回
+        sound.playError();
+        el.classList.remove('touch-dragging');
+        el.style.left = '';
+        el.style.top = '';
+        el.style.animation = "shake 0.4s";
+        setTimeout(() => el.style.animation = "", 400);
+      }
+    });
+  }
+
+  function handleDropSuccess(item, zone) {
+    sound.playCorrect();
+    // 移除拖拽样式，创建静态副本
+    item.classList.remove('touch-dragging');
+    item.style.left = '';
+    item.style.top = '';
+    
+    const clone = item.cloneNode(true);
+    clone.draggable = false;
+    clone.style.width = "90%";
+    clone.style.margin = "5px auto";
+    // 清除手机端事件监听器的大概方式是克隆，这里因为cloneNode(true)默认不带事件监听，所以安全
+    
+    zone.appendChild(clone);
+    item.remove();
+    
+    // 检查完成
+    setTimeout(() => {
+      if (document.querySelectorAll('.drag-topics .drag').length === 0) {
+        document.querySelector('#dragArea .buttons button').style.animation = 'pulse 1s infinite';
+        sound.playCorrect();
+      }
+    }, 100);
+  }
+
+  function initDropZones() {
     document.querySelectorAll('.zone').forEach(z => {
+      // 电脑端 Drop
       z.ondragover = e => { e.preventDefault(); z.classList.add('drag-over'); };
       z.ondragleave = () => z.classList.remove('drag-over');
       z.ondrop = e => {
         e.preventDefault();
         z.classList.remove('drag-over');
-        if (draggedItem && draggedItem.dataset.cat === z.dataset.zone) {
-          sound.playCorrect();
-          const clone = draggedItem.cloneNode(true);
-          clone.draggable = false;
-          clone.style.width = '90%'; clone.style.marginBottom = '5px';
-          z.appendChild(clone);
-          draggedItem.remove();
+        if (dragged && dragged.dataset.cat === z.dataset.zone) {
+          handleDropSuccess(dragged, z);
         } else {
           sound.playError();
-          draggedItem.style.animation = 'shake 0.4s';
-          setTimeout(() => draggedItem.style.animation = '', 400);
+          if(dragged) {
+            dragged.style.animation = "shake 0.5s";
+            setTimeout(() => dragged.style.animation = "", 500);
+          }
         }
+        dragged = null;
       };
     });
   }
@@ -441,13 +573,20 @@
     document.getElementById('principle').style.display = 'block';
     document.getElementById('principle').scrollIntoView({behavior:'smooth'});
   };
-  
   window.resetDrag = () => {
-    document.querySelectorAll('.zone .drag').forEach(e => e.remove());
+    sound.playShuffle();
+    document.querySelectorAll('.zone .drag').forEach(d => d.remove());
+    document.querySelector('#dragArea .buttons button').style.animation = 'none';
     goDrag();
   };
 
-  init();
+  // 初始化
+  window.onload = function() {
+    initializeTopics();
+    // 弹窗关闭逻辑
+    warningModal.onclick = (e) => { if(e.target === warningModal) warningModal.style.display = 'none'; }
+  };
 </script>
+
 </body>
 </html>
