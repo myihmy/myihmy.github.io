@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
+<!-- saved from url=(0025)https://myihmy.github.io/ -->
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>🌈 SAFE + C 趣味话题分类大挑战 🌈</title>
+  <title>🌈 SAFE 趣味话题分类大挑战 🌈</title>
   <style>
     /* === 1. 基础设置 === */
     body {
@@ -51,9 +51,14 @@
     /* 2. 话题卡片 */
     .topics {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      grid-template-columns: repeat(6, 1fr);
       gap: 12px;
       margin-bottom: 20px;
+    }
+    @media (max-width: 600px) {
+      .topics {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
     
     .topic {
@@ -257,19 +262,19 @@
 <button class="audio-test" onclick="testAllSounds()">🔊 测试音效</button>
 
 <div class="container">
-  <h1>🎮 SAFE + C Topics 🎮</h1>
+  <h1>🎮 SAFE Topics 🎮</h1>
 
   <div class="instructions">
-    <p>🌟 <b>任务一：</b> 点选 <b>适合聊天</b> 的话题（SAFE+C 类别）。</p>
+    <p>🌟 <b>任务一：</b> 点选 <b>适合聊天</b> 的话题。</p>
     <p>📦 <b>任务二：</b> 点击"开始分类"，将话题拖进正确的盒子里！</p>
     <p style="color: #ff4d4d;"><b>小心：</b> 选错不合适的话题会触发警报哦！</p>
     <p style="color: #5d5dff; font-weight: bold;">🎵 <b>音效已就绪！点击正确话题会有清脆音效！</b></p>
   </div>
 
-  <div class="topics" id="topics"></div>
+  <div class="topics" id="topics"><div class="topic " data-cat="Art" data-bad="false"><div class="topic-emoji">🎨</div><div>Painting</div></div><div class="topic " data-cat="Entertainment &amp; Environment" data-bad="false"><div class="topic-emoji">☀️</div><div>Weather</div></div><div class="topic bad" data-cat="" data-bad="true"><div class="topic-emoji">📅</div><div>Age</div></div><div class="topic " data-cat="Entertainment &amp; Environment" data-bad="false"><div class="topic-emoji">✈️</div><div>Travel</div></div><div class="topic bad" data-cat="" data-bad="true"><div class="topic-emoji">⚖️</div><div>Weight</div></div><div class="topic bad" data-cat="" data-bad="true"><div class="topic-emoji">💰</div><div>Money</div></div><div class="topic " data-cat="Sport" data-bad="false"><div class="topic-emoji">🏃</div><div>Running</div></div><div class="topic bad" data-cat="" data-bad="true"><div class="topic-emoji">🗣️</div><div>Arguments</div></div><div class="topic " data-cat="Food" data-bad="false"><div class="topic-emoji">🍲</div><div>Hot Pot</div></div><div class="topic " data-cat="Art" data-bad="false"><div class="topic-emoji">🎬</div><div>Movies</div></div><div class="topic " data-cat="Food" data-bad="false"><div class="topic-emoji">🍅</div><div>Tomato &amp; Egg</div></div><div class="topic " data-cat="Sport" data-bad="false"><div class="topic-emoji">🏀</div><div>Basketball</div></div></div>
 
   <div class="buttons">
-    <button id="startBtn" onclick="goDrag()" disabled>➡️ 开始分类</button>
+    <button id="startBtn" onclick="goDrag()" disabled="">➡️ 开始分类</button>
     <button class="btn-reset" onclick="resetSelection()">🔄 重置选择</button>
     <button class="btn-shuffle" onclick="reshuffleTopics()">🔀 乱序话题</button>
   </div>
@@ -282,15 +287,14 @@
       <div class="zone" data-zone="Sport"><h3>🏀 Sport</h3></div>
       <div class="zone" data-zone="Art"><h3>🎬 Art</h3></div>
       <div class="zone" data-zone="Food"><h3>🍜 Food</h3></div>
-      <div class="zone" data-zone="Entertainment & Environment">
+      <div class="zone" data-zone="Entertainment &amp; Environment">
       <h3>
-        🌍 Ent. & Env.
+        🌍 Ent. &amp; Env.
         <span style="display: block; font-size: 0.8em; font-weight: normal; margin-top: 5px;">
-            (娱乐&环境)
+            (娱乐&amp;环境)
         </span>
       </h3>
       </div>
-      <div class="zone" data-zone="Chongqing Specials"><h3>🌶️ Chongqing Specials</h3></div>
     </div>
 
     <div class="buttons">
@@ -305,10 +309,9 @@
       <strong>S</strong> – Sport（运动）🏃‍♂️<br>
       <strong>A</strong> – Art（艺术）🎬<br>
       <strong>F</strong> – Food（食物）🍕<br>
-      <strong>E</strong> – Entertainment & Environment（娱乐与环境）🌍<br>
-      <strong>C</strong> – Chongqing Specials（重庆特色）🏙️
+      <strong>E</strong> – Entertainment &amp; Environment（娱乐与环境）🌍
     </div>
-    <p style="margin-top: 15px; font-weight: bold; color: #7ed957;">✅ 记住 SAFE + C 原则，社交无压力！</p>
+    <p style="margin-top: 15px; font-weight: bold; color: #7ed957;">✅ 记住 SAFE 原则，社交无压力！</p>
   </div>
 </div>
 
@@ -379,8 +382,6 @@
     { html: '<div class="topic-emoji">🍅</div><div>Tomato & Egg</div>', cat: 'Food', bad: false },
     { html: '<div class="topic-emoji">✈️</div><div>Travel</div>', cat: 'Entertainment & Environment', bad: false },
     { html: '<div class="topic-emoji">☀️</div><div>Weather</div>', cat: 'Entertainment & Environment', bad: false },
-    { html: '<div class="topic-emoji">🏙️</div><div>Jiefangbei</div>', cat: 'Chongqing Specials', bad: false },
-    { html: '<div class="topic-emoji">🏯</div><div>Ciqikou</div>', cat: 'Chongqing Specials', bad: false },
     { html: '<div class="topic-emoji">📅</div><div>Age</div>', cat: '', bad: true },
     { html: '<div class="topic-emoji">⚖️</div><div>Weight</div>', cat: '', bad: true },
     { html: '<div class="topic-emoji">💰</div><div>Money</div>', cat: '', bad: true },
@@ -591,5 +592,6 @@
   };
 </script>
 
-</body>
-</html>
+
+
+</body></html>
